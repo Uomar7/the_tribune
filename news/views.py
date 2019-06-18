@@ -2,6 +2,7 @@ from django.http import HttpResponse,Http404
 import datetime as dt
 from django.shortcuts import render,redirect
 from .models import Article
+from .forms import NewsLetterForm
 
 # create you views here.
 # def news_of_day(request):
@@ -22,7 +23,16 @@ from .models import Article
 def news_today(request):
     date = dt.date.today()
     news = Article.todays_news()
-    return render(request, 'all-news/today-news.html', {"date": date, "news": news})
+
+    if request.method == 'POST':
+        form = NewsLetterForm(request.POST)
+        
+        if form.is_valid():
+            print('valid')
+        
+        else:
+            form = NewsLetterForm()
+        return render(request, 'all-news/today-news.html', {"date": date, "news": news, "letterForm":form})
 
 # View function to present news from past days
 def past_days_news(request,past_date):
